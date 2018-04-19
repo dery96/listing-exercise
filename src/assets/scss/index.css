@@ -187,7 +187,6 @@ body {
 .App .listing-area .column .value {
   border-bottom: solid 1px #dcdcdc;
   border-right: solid 1px #dcdcdc;
-  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
