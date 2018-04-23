@@ -1,0 +1,31 @@
+@import 'variables.scss';
+
+.popover-header {
+  display: flex;
+  flex-flow: row nowrap;
+
+  justify-content: space-between;
+  align-items: center;
+
+  .btn-close {
+    border: none;
+    margin: 0;
+    padding: 0;
+
+    width: auto;
+    overflow: visible;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    line-height: normal;
+    -webkit-font-smoothing: inherit;
+    -moz-osx-font-smoothing: inherit;
+    -webkit-appearance: none;
+
+    .icon {
+      font-size: 15px;
+      width: 1.3em;
+      height: 1.3rem;
+    }
+  }
+}

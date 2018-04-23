@@ -1,8 +1,7 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { Container, Col, Row, Button } from 'reactstrap';
+import { Col } from 'reactstrap';
 
-import PoundRating from './PoundRating';
+import Payment from './Payment';
 
 function LabelColumn() {
   return (
@@ -15,32 +14,22 @@ function LabelColumn() {
   );
 }
 
-function ListingColumn({ name, rating, reference, value }) {
-  return (
-    <div className="column">
-      <div className="supplier">{name}</div>
-      <div className="pound-rating">
-        <PoundRating rate={rating} />
-      </div>
-      <div className="reference"> {reference} </div>
-      <div className="value"> {`£${value}`}</div>
-    </div>
-  );
-}
-
 function SupplierListing({ payments }) {
   return (
-    <Col md={12} s className="">
+    <Col md={12} className="">
       <div className="listing-area">
         <LabelColumn />
         {payments ? (
           payments.map((payment, index) => {
             return (
-              <ListingColumn
+              <Payment
+                key={index}
                 name={payment.payment_supplier}
                 rating={payment.payment_cost_rating}
                 reference={payment.payment_ref}
                 value={payment.payment_amount}
+                popUpTitle={`Payment: ${payment.payment_supplier}`}
+                popUpDesc="this is payment descrption there you can find some useful information about it."
               />
             );
           })
@@ -53,8 +42,5 @@ function SupplierListing({ payments }) {
     </Col>
   );
 }
-PoundRating.propTypes = {
-  rate: PropTypes.number.isRequired
-};
 
 export default SupplierListing;

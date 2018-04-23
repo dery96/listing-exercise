@@ -1,9 +1,5 @@
 import React from 'react';
-import { Container, Col, Row, Button } from 'reactstrap';
-
-function Line({}) {
-  return <div className="line-break" />;
-}
+import { Col, Row } from 'reactstrap';
 
 function Header({ props }) {
   return (

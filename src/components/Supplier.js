@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { Col, Row } from 'reactstrap';
 
 import SupplierListing from './SupplierListing';
-import PoundRating from './PoundRating';
 
 const left = '<';
 const right = '>';
@@ -12,39 +10,12 @@ class Supplier extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: undefined,
-      payments: [
-        {
-          payment_supplier: 'ANCHOR TRUST',
-          payment_ref: '499599',
-          payment_cost_rating: '1',
-          payment_amount: '674.80'
-        },
-        {
-          payment_supplier: 'ANCHOR TRUST',
-          payment_ref: '500394',
-          payment_cost_rating: '3',
-          payment_amount: '3053.84'
-        },
-        {
-          payment_supplier: 'ANCHOR TRUST',
-          payment_ref: '500395',
-          payment_cost_rating: '5',
-          payment_amount: '15650.00'
-        },
-        {
-          payment_supplier: 'ANDREWS WASTE MANAGEMENT',
-          payment_ref: '500396',
-          payment_cost_rating: '2',
-          payment_amount: '1222.22'
-        },
-        {
-          payment_supplier: 'AQUADITION LTD',
-          payment_ref: '1141260',
-          payment_cost_rating: '1',
-          payment_amount: '528.75'
-        }
-      ]
+      payments: undefined,
+      pagination: undefined,
+      querySearch: { name: 'query', value: '' },
+      queryPage: { name: 'page', value: '' },
+      queryRating: { name: 'rating', value: '' },
+      current: undefined
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -52,50 +23,112 @@ class Supplier extends Component {
     this.renderPagination = this.renderPagination.bind(this);
   }
 
+  componentDidMount() {
+    this.fetchData();
+  }
+
   handleChange(e) {
-    this.setState({ value: e.target.value });
+    this.setState({ [e.target.name]: e.target.value });
   }
 
   handleSubmit(e) {
-    alert('Your favorite flavor is: ' + this.state.value);
     e.preventDefault();
+  }
+
+  async fetchData() {
+    const { queryPage, querySearch, queryRating } = this.state;
+    let queries = '';
+
+    if (queryPage.value || querySearch.value || queryRating.value) {
+      [queryPage, querySearch, queryRating].map(query => {
+        if (query.value) {
+          if (queries) {
+            queries += query.value ? `&${query.name}=${query.value}` : '';
+          } else {
+            queries += query.value ? `?${query.name}=${query.value}` : '';
+          }
+        }
+      });
+    }
+    const url = 'http://test-api.kuria.tshdev.io/' + queries;
+    try {
+      const response = await fetch(url);
+      const answer = await response.json();
+      await this.setState({
+        payments: answer.payments,
+        pagination: answer.pagination
+      });
+    } catch (err) {
+      await this.setState({
+        payments: undefined,
+        pagination: undefined
+      });
+    }
   }
 
   renderSearch() {
     return (
-      <form className="col search-area" onSubmit={this.handleSubmit}>
+      <div className="col search-area">
         <input
           type="text"
           placeholder="Search suppliers"
           className="search-input"
+          value={this.state.querySearch.value}
+          onChange={e => {
+            this.setState({
+              querySearch: { name: 'query', value: e.target.value }
+            });
+          }}
+          onKeyPress={async e => {
+            if (e.key === 'Enter') {
+              await this.setState({ queryPage: { name: 'page', value: '' } });
+              this.fetchData();
+            }
+          }}
         />
         <div className="select-bk">
           <select
-            value={this.state.value}
-            onChange={this.handleChange}
+            value={this.state.queryRating.value}
+            onChange={e =>
+              this.setState({
+                queryRating: { name: 'rating', value: e.target.value }
+              })
+            }
             placeholder="Select pound rating"
-            ya
           >
-            <option value="grapefruit">Grapefruit</option>
-            <option value="lime">Lime</option>
-            <option value="coconut">Coconut</option>
-            <option value="mango">Mango</option>
+            <option value={''}>Select pound rating</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
           </select>
         </div>
 
         <button
           className="btn"
-          onClick={() => this.setState({ value: undefined })}
+          onClick={async () => {
+            await this.setState({
+              querySearch: { name: 'query', value: '' },
+              queryPage: { name: 'page', value: '' },
+              queryRating: { name: 'rating', value: '' }
+            });
+            this.fetchData();
+          }}
         >
           Reset
         </button>
         <button
+          type="sumbit"
           className="btn btn-blue"
-          onClick={() => this.setState({ value: undefined })}
+          onClick={async () => {
+            await this.setState({ queryPage: { name: 'page', value: '' } });
+            this.fetchData();
+          }}
         >
           Search
         </button>
-      </form>
+      </div>
     );
   }
 
@@ -103,12 +136,42 @@ class Supplier extends Component {
     return (
       <Col md={12} className="pagination">
         <div className="buttons">
-          <button className="btn">{left}</button>
-          {/* {() => return this.state.data.pagination.links.map((link, index) => {
-			  return <button className='btn' key={index}>{link.name}</button>			  
-		  });
-		  } */}
-          <button className="btn">{right}</button>
+          {this.state.pagination && this.state.pagination.left ? (
+            <button className="btn">{left}</button>
+          ) : (
+            ''
+          )}
+          {this.state.pagination
+            ? Object.entries(this.state.pagination.links).map((link, index) => {
+                console.log(index);
+                return (
+                  <button
+                    className={
+                      this.state.pagination.links.current === link[0]
+                        ? 'btn btn-active'
+                        : 'btn'
+                    }
+                    key={index}
+                    value={link[0]}
+                    onClick={async e => {
+                      await this.setState({
+                        queryPage: { name: 'page', value: e.target.value },
+                        current: e.target.value
+                      });
+                      this.fetchData();
+                    }}
+                  >
+                    {link[0]}
+                  </button>
+                );
+              })
+            : ''}
+
+          {this.state.pagination && this.state.pagination.right ? (
+            <button className="btn">{right}</button>
+          ) : (
+            ''
+          )}
         </div>
       </Col>
     );

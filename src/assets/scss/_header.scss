@@ -1,0 +1,27 @@
+@import 'variables.scss';
+header {
+  text-align: center;
+  line-height: 1.2;
+  .header-title {
+    color: $header-title-color;
+    font-family: 'Source Sans Pro';
+    font-weight: 200;
+    font-size: 4em;
+    @media (min-width: 576px) {
+      font-size: 4.375em;
+    }
+    padding-top: 0.625em;
+    margin-bottom: 0;
+  }
+  .header-description {
+    color: $header-description-color;
+    font-size: 1.0625em;
+    padding-top: 1.125em;
+  }
+  .line-break {
+    margin: 0;
+    margin-top: 1.6875em;
+    color: $header-line-break-color;
+    height: 1px;
+  }
+}
