@@ -137,7 +137,21 @@ class Supplier extends Component {
       <Col md={12} className="pagination">
         <div className="buttons">
           {this.state.pagination && this.state.pagination.left ? (
-            <button className="btn">{left}</button>
+            <button
+              className="btn"
+              onClick={async () => {
+                await this.setState({
+                  queryPage: {
+                    name: 'page',
+                    value: parseInt(this.state.current) - 1
+                  },
+                  current: parseInt(this.state.current) - 1
+                });
+                this.fetchData();
+              }}
+            >
+              {left}
+            </button>
           ) : (
             ''
           )}
@@ -185,9 +199,26 @@ class Supplier extends Component {
                   );
                 })
             : ''}
-
           {this.state.pagination && this.state.pagination.right ? (
-            <button className="btn">{right}</button>
+            <button
+              className="btn"
+              onClick={async () => {
+                await this.setState({
+                  queryPage: {
+                    name: 'page',
+                    value: this.state.current
+                      ? parseInt(this.state.current) + 1
+                      : '1'
+                  },
+                  current: this.state.current
+                    ? parseInt(this.state.current) + 1
+                    : '1'
+                });
+                this.fetchData();
+              }}
+            >
+              {right}
+            </button>
           ) : (
             ''
           )}
