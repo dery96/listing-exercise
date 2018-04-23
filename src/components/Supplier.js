@@ -142,29 +142,48 @@ class Supplier extends Component {
             ''
           )}
           {this.state.pagination
-            ? Object.entries(this.state.pagination.links).map((link, index) => {
-                console.log(index);
-                return (
-                  <button
-                    className={
-                      this.state.pagination.links.current === link[0]
-                        ? 'btn btn-active'
-                        : 'btn'
+            ? Object.entries(this.state.pagination.links)
+                .filter(link => {
+                  if (
+                    parseInt(this.state.pagination.current) === 0 ||
+                    parseInt(this.state.pagination.current) === 1
+                  ) {
+                    if (4 > parseInt(link[0])) {
+                      return true;
                     }
-                    key={index}
-                    value={link[0]}
-                    onClick={async e => {
-                      await this.setState({
-                        queryPage: { name: 'page', value: e.target.value },
-                        current: e.target.value
-                      });
-                      this.fetchData();
-                    }}
-                  >
-                    {link[0]}
-                  </button>
-                );
-              })
+                  } else if (
+                    parseInt(this.state.pagination.current) - 2 <=
+                      parseInt(link[0]) &&
+                    parseInt(this.state.pagination.current) + 2 >
+                      parseInt(link[0])
+                  ) {
+                    return true;
+                  }
+                  return false;
+                })
+                .map((link, index) => {
+                  return (
+                    <button
+                      className={
+                        parseInt(this.state.pagination.current) ===
+                        parseInt(link[0])
+                          ? 'btn btn-active'
+                          : 'btn'
+                      }
+                      key={index}
+                      value={link[0]}
+                      onClick={async e => {
+                        await this.setState({
+                          queryPage: { name: 'page', value: e.target.value },
+                          current: e.target.value
+                        });
+                        this.fetchData();
+                      }}
+                    >
+                      {link[0]}
+                    </button>
+                  );
+                })
             : ''}
 
           {this.state.pagination && this.state.pagination.right ? (
