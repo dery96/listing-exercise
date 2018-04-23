@@ -1,4 +1,4 @@
-## Ckonfig excercise
+## Listing excercise
 
 simple app written using React.js libary
 
