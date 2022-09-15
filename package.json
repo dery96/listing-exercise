@@ -4,7 +4,7 @@
   "homepage": "https://dery96.github.io/listing-exercise/",
   "private": true,
   "dependencies": {
-    "bootstrap": "^4.0.0",
+    "bootstrap": "^4.3.1",
     "gh-pages": "^1.1.0",
     "prop-types": "^15.6.1",
     "react": "^16.3.2",
